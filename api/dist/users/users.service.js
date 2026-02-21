@@ -22,29 +22,43 @@ let UsersService = class UsersService {
         this.db = this.firebaseAdmin.firestore();
     }
     collection = 'users';
-    async create(data) {
-        const docRef = await this.db.collection(this.collection).add(data);
+    async create(createUserDto) {
+        const docRef = await this.db
+            .collection(this.collection)
+            .add(createUserDto);
         return { id: docRef.id };
     }
     async findAll() {
-        const snapshot = await this.db.collection(this.collection).get();
+        const snapshot = await this.db
+            .collection(this.collection)
+            .get();
         return snapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data(),
         }));
     }
     async findOne(id) {
-        const doc = await this.db.collection(this.collection).doc(id).get();
-        if (!doc.exists)
+        const doc = await this.db
+            .collection(this.collection)
+            .doc(id)
+            .get();
+        if (!doc.exists) {
             return null;
+        }
         return { id: doc.id, ...doc.data() };
     }
-    async update(id, data) {
-        await this.db.collection(this.collection).doc(id).update(data);
+    async update(id, updateUserDto) {
+        await this.db
+            .collection(this.collection)
+            .doc(id)
+            .update(updateUserDto);
         return { success: true };
     }
     async remove(id) {
-        await this.db.collection(this.collection).doc(id).delete();
+        await this.db
+            .collection(this.collection)
+            .doc(id)
+            .delete();
         return { success: true };
     }
 };

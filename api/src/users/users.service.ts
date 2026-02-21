@@ -1,5 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import * as admin from 'firebase-admin';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -13,13 +15,19 @@ export class UsersService {
 
   private collection = 'users';
 
-  async create(data: any) {
-    const docRef = await this.db.collection(this.collection).add(data);
+  async create(createUserDto: CreateUserDto) {
+    const docRef = await this.db
+      .collection(this.collection)
+      .add(createUserDto);
+
     return { id: docRef.id };
   }
 
   async findAll() {
-    const snapshot = await this.db.collection(this.collection).get();
+    const snapshot = await this.db
+      .collection(this.collection)
+      .get();
+
     return snapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data(),
@@ -27,18 +35,33 @@ export class UsersService {
   }
 
   async findOne(id: string) {
-    const doc = await this.db.collection(this.collection).doc(id).get();
-    if (!doc.exists) return null;
+    const doc = await this.db
+      .collection(this.collection)
+      .doc(id)
+      .get();
+
+    if (!doc.exists) {
+      return null;
+    }
+
     return { id: doc.id, ...doc.data() };
   }
 
-  async update(id: string, data: any) {
-    await this.db.collection(this.collection).doc(id).update(data);
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    await this.db
+      .collection(this.collection)
+      .doc(id)
+      .update(updateUserDto);
+
     return { success: true };
   }
 
   async remove(id: string) {
-    await this.db.collection(this.collection).doc(id).delete();
+    await this.db
+      .collection(this.collection)
+      .doc(id)
+      .delete();
+
     return { success: true };
   }
 }
